@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>10秒ピッタリでとめて</title>
+    <link rel ="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <p>-30代ラストイヤーProject-</p>
+    </header>
+    <div class="stopwacth-wrap">
+      <h1>10秒ぴったりで止めれられたらいい日</h1>
+      <p class="disc">途中からカウントが消えるよ</p>
+      <p id="timer_js" class="timer">00:00.000</p>
+      <button id="start_js" class="start">START</button>
+      <button id="stop_js" class="stop">STOP！</button>
+      <button id="reset_js" class="reset">RESET</button>
+    </div>
+    <script>
+      'use strict';
+      //それぞれの要素・ボタンを取得する
+    {
+      const timer = document.getElementById( 'timer_js' );
+      const startButton = document.getElementById( 'start_js' );
+      const stopButton = document.getElementById( 'stop_js' );
+      const resetButton = document.getElementById( 'reset_js' );
+
+      let startTime;  //宣言
+      let countTimeoutId;  //宣言
+      let hideTimeoutId;
+
+      //あとで実行させるための関数をここで定義
+      function countUp(){
+        const diff = new Date(Date.now() - startTime);//経過時間をnewDateに渡してあげる
+        const m = String(diff.getMinutes()).padStart(2, '0');//分を取得する
+        const s = String(diff.getSeconds()).padStart(2, '0');
+        const ms = String(diff.getMilliseconds()).padStart(3, '0');//ミリ秒を取得する
+        timer.textContent = `${m}:${s}.${ms}`;
+
+        //一定時間ごと（10ミリ秒後）にcountUpが走る
+        countTimeoutId = setTimeout(() => {
+          countUp();
+        },10);
+      }
+      //クラス付与関数を定義
+      function hide(){
+        timer.classList.add( 'hide' );
+      }
+
+
+      //ボタンの定義,ボタンの無効化を返す
+    
+        function setButtonStateInitial(){
+          startButton.disabled = true;
+          stopButton.disabled = false;
+          resetButton.disabled = true;
+        }
+        function setButtonStateRunning(){
+          startButton.disabled = true;
+          stopButton.disabled = true;
+          resetButton.disabled = false;
+        }
+        function setButtonStateStopped(){
+          startButton.disabled = false;
+          stopButton.disabled = false;
+          resetButton.disabled = false;
+        }        
+
+      // 2. スタートボタンを押したら、押したところの時刻を取得してカウントアップ関数を実行+3秒後に表示を消す
+      startButton.addEventListener( 'click', () => {
+        setButtonStateInitial();//無効化を返す関数
+        startTime = Date.now();
+        countUp();　//countUpの関数を実行させる
+        //3秒後クラスふよ
+        hideTimeoutId = setTimeout(() => {
+          hide();
+        }, 3000);
+      
+      });
+      
+
+      // 3. ストップを押すとタイマーが止まる(取得してイベント)
+      stopButton.addEventListener( 'click' , () => {
+        setButtonStateRunning();
+        clearTimeout(countTimeoutId);
+        clearTimeout(hideTimeoutId);
+        timer.classList.remove( 'hide' );
+
+        setTimeout(() =>{
+          if(String(timer) >= '00:09.500' && String(timer) <= '00:10.500'){
+            alert('おしい！ニアピン賞(●´ω｀●)');
+            }else if( String(timer) === '00:00.000' ){
+              alert('おめでとうございます！！！すごい！！！天才！めっちゃいい日！！');
+            }else{
+              alert( 'ちょっと下手くそだね(´・ω・｀)' );
+            };
+          },40)
+      });
+
+
+      //リセット　を押せば0へ戻る&ボタンの色も元に戻る
+      resetButton.addEventListener( 'click' , () => {
+        setButtonStateStopped();
+        timer.textContent = '00:00.000';
+      });
+
+      // 4. 10秒ピッタリに止まると画面がにぎやかになる
+      // （まだ詳しいことは未定）
+
+      // 誤差1秒以内だと「おしい！」　誤差0.5秒以内だと「ニアピン！」
+
+
+      // 誤差2秒以上だと「全然だめー」の表示
+
+    }
+
+
+    </script>
+  </body>
+</html>
